@@ -30,4 +30,17 @@ public class CommonSoxProcess {
         return con;
     }
     // endregion
+
+    // region デバイス情報を取得する。
+    public Device DeviceInfo(SoxConnection con, String device_name) throws Exception {
+        // region Subscribeの一連処理
+        SoxDevice device = new SoxDevice(con, device_name);
+
+        // Deviceのメタ情報を取得する (今回は使わないかも?)
+        // deviceInfoオブジェクト内にそれぞれのpropertyが存在する
+        Device deviceInfo = device.getDevice();
+
+        return deviceInfo;
+    }
+    // endregion
 }
