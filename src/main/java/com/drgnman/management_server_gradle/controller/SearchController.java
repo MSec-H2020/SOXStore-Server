@@ -21,7 +21,6 @@ public class SearchController {
     @ResponseBody
 
     public String search(@RequestParam(value = "topicId", defaultValue = "") String topicId,
-                           @RequestParam(value = "topicName", defaultValue = "")String topicName,
                            @RequestParam(value = "category", defaultValue = "") String category,
                            @RequestParam(value = "lat", defaultValue = "") String lat,
                            @RequestParam(value = "lng", defaultValue = "") String lng,
@@ -37,8 +36,7 @@ public class SearchController {
         String json;
 
         // RequestParamの設定
-        if (!("".equals(topicId))) searchObj.setTopic_id(Integer.parseInt(topicId));
-        searchObj.setTopic_name(topicName);
+        if (!("".equals(topicId))) searchObj.setTopic_id(topicId);
         searchObj.setCategory(category);
         if (!("".equals(lat))) searchObj.setLocation_lat(Double.parseDouble(lat));
         if (!("".equals(lng))) searchObj.setLocation_lng(Double.parseDouble(lng));
