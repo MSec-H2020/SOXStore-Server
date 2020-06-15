@@ -24,7 +24,7 @@ public class SearchService {
     public TopicDTO simpleSearch (TopicDTO searchObj) {
         try {
             // トピックIDが一致するレコードを一件取得
-            Topic topic = repository.getOne(searchObj.getTopic_id());
+            Topic topic = repository.TopicSearchSingle(searchObj.getTopic_id());
             TopicDTO result = modelMapper.map(topic, TopicDTO.class);
             return result;
         } catch (Exception e) {
@@ -52,11 +52,10 @@ public class SearchService {
                 for (int j=0; j<length; j++) {
                     list.add(Array.get(resultList.get(i), j));
                 }
-                result.setTopic_id((Integer) list.get(0));        // トピックNo.
-                result.setTopic_name((String) list.get(1));       // トピック名
-                result.setCategory((String) list.get(2));         // カテゴリ名
-                result.setLocation_lat((Double) list.get(3));     // 位置情報(緯度)
-                result.setLocation_lng((Double) list.get(4));     // 位置情報(経度)
+                result.setTopic_id((String) list.get(0));        // トピックNo.
+                result.setCategory((String) list.get(1));         // カテゴリ名
+                result.setLocation_lat((Double) list.get(2));     // 位置情報(緯度)
+                result.setLocation_lng((Double) list.get(3));     // 位置情報(経度)
                 topicList.add(result);
             }
             return topicList;
