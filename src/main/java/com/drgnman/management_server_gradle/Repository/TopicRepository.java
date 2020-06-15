@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface TopicRepository extends JpaRepository<Topic, Integer> {
-    @Query(value = "SELECT TOPIC_ID, TOPIC_NAME, CATEGORY, LOCATION_LAT, LOCATION_LNG," +
+    @Query(value = "SELECT TOPIC_ID, CATEGORY, LOCATION_LAT, LOCATION_LNG," +
             " (" +
             "6371 * acos(" +
             "cos(radians(35.6804067))" +
@@ -27,7 +27,8 @@ public interface TopicRepository extends JpaRepository<Topic, Integer> {
               @Param("distance") double distance
     );
 
-    // @Query(value = "SELECT * FROM TOPIC WHERE TOPIC_ID = :topic_id", nativeQuery = true)
-    // Topic TopicSearchSingle(@Param("topic_id") int topic_id);
+    // 単純検索(Topic ID検索)
+    @Query(value = "SELECT * FROM TOPIC WHERE TOPIC_ID = :topic_id", nativeQuery = true)
+    Topic TopicSearchSingle(@Param("topic_id") String topic_id);
 }
 
