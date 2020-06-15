@@ -1,42 +1,27 @@
 package com.drgnman.management_server_gradle.Entity;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
 public class Topic {
-    // トピックNo.
     @Id
-    private int topic_id;
-    // トピック名
-    private String topic_name;
-    // カテゴリ名
-    private String category;
-    // 位置情報 (緯度)
-    private double location_lat;
-    // 位置情報 (経度)
-    private double location_lng;
-    // 住所 (県名)
-    private String address1;
-    // 住所 (市町村名)
-    private String address2;
-    // 生存(有効)時間
-    private int lifetime;
-    // 検索範囲
-    private double cover_distance;
+    private String topic_id;            // トピックID(名称)
+    private String category;            // カテゴリ名
+    private double location_lat;        // 位置情報(緯度)
+    private double location_lng;        // 位置情報(経度)
+    private String address1;            // 住所(県名)
+    private String address2;            // 住所(市町村名)
+    private int lifetime;               // 生存(有効)時間
+    private double cover_distance;      // 検索範囲
 
-    public int getTopic_id() {
+    public String getTopic_id() {
         return topic_id;
     }
-    public void setTopic_id(int topic_id) {
+    public void setTopic_id(String topic_id) {
         this.topic_id = topic_id;
-    }
-
-    public String getTopic_name() {
-        return topic_name;
-    }
-    public void setTopic_name(String topic_name) {
-        this.topic_name = topic_name;
     }
 
     public String getCategory() {
