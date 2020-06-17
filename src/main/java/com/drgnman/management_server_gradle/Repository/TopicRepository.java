@@ -29,6 +29,6 @@ public interface TopicRepository extends JpaRepository<Topic, Integer> {
 
     // 単純検索(Topic ID検索)
     @Query(value = "SELECT * FROM TOPIC WHERE TOPIC_ID = :topic_id", nativeQuery = true)
-    Topic TopicSearchSingle(@Param("topic_id") String topic_id);
+    Topic TopicSearchByTopicId(@Param("topic_id") String topic_id);
 }
 
