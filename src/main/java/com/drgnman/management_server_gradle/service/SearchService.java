@@ -24,7 +24,7 @@ public class SearchService {
     public TopicDTO simpleSearch (TopicDTO searchObj) {
         try {
             // トピックIDが一致するレコードを一件取得
-            Topic topic = repository.TopicSearchSingle(searchObj.getTopic_id());
+            Topic topic = repository.TopicSearchByTopicId(searchObj.getTopic_id());
             TopicDTO result = modelMapper.map(topic, TopicDTO.class);
             return result;
         } catch (Exception e) {
