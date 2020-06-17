@@ -14,8 +14,8 @@ public class Data {
     private double location_lat;       // 位置情報(緯度)
     private double location_lng;       // 位置情報(経度)
     private String value;              // データ本体
-    private String pub_datetime;       // publishされた時間
-    private String datetime;           // データが追加された時間
+    private int pub_timestamp;      // publishされた時間
+    private int timestamp;          // データが追加された時間
 
     public int getId() {
         return id;
@@ -49,19 +49,17 @@ public class Data {
         this.value = value;
     }
 
-
-    public String getPub_datetime() {
-        return pub_datetime;
+    public int getPub_timestamp() {
+        return pub_timestamp;
     }
-    public void setPub_datetime(String pub_datetime) {
-        this.pub_datetime = pub_datetime;
-    }
-
-    public String getDatetime() {
-        return datetime;
-    }
-    public void setDatetime(String datetime) {
-        this.datetime = datetime;
+    public void setPub_timestamp(int pub_timestamp) {
+        this.pub_timestamp = pub_timestamp;
     }
 
+    public int getTimestamp() {
+        return timestamp;
+    }
+    public void setTimestamp(int timestamp) {
+        this.timestamp = timestamp;
+    }
 }
