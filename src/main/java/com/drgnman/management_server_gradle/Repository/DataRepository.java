@@ -12,5 +12,5 @@ import java.util.List;
 @Repository
 public interface DataRepository extends JpaRepository<Data, Integer> {
     @Query(value = "SELECT * FROM TOPIC WHERE TOPIC_ID = :topic_id", nativeQuery = true)
-    List<Topic> DataSearchByTopicId(@Param("topic_id") String topic_id);
+    List<Data> DataSearchByTopicId(@Param("topic_id") String topic_id);
 }
