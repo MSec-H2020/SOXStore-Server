@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface TopicRepository extends JpaRepository<Topic, Integer> {
-    @Query(value = "SELECT TOPIC_ID, TOPIC_NAME, CATEGORY, LOCATION_LAT, LOCATION_LNG," +
+    @Query(value = "SELECT TOPIC_ID, CATEGORY, LOCATION_LAT, LOCATION_LNG," +
             " (" +
             "6371 * acos(" +
             "cos(radians(35.6804067))" +
@@ -27,7 +27,21 @@ public interface TopicRepository extends JpaRepository<Topic, Integer> {
               @Param("distance") double distance
     );
 
-    // @Query(value = "SELECT * FROM TOPIC WHERE TOPIC_ID = :topic_id", nativeQuery = true)
-    // Topic TopicSearchSingle(@Param("topic_id") int topic_id);
+    // 単純検索(Topic ID検索)
+    @Query(value = "SELECT * FROM TOPIC WHERE TOPIC_ID = :topic_id", nativeQuery = true)
+    Topic TopicSearchByTopicId(@Param("topic_id") String topic_id);
+
+    // うまく動かないため、saveメソッドで代用
+    // // LifeTimeの更新(Topic ID指定による)
+    // @Query(value = "UPDATE TOPIC SET LIFETIME = :lifetime  WHERE TOPIC_ID = :topic_id", nativeQuery = true)
+    // Topic TopicUpdateLifetimeByTopicId(@Param("topic_id") String topic_id, @Param("lifetime") int lifetime);
+
+    // // Location, LifeTimeの更新(Topic ID指定による)
+    // @Query(value = "UPDATE TOPIC SET LOCATION_LAT = :location_lat, LOCATION_LNG = :location_lng, COVER_DISTANCE = :cover_distance, LIFETIME = :lifetime  WHERE TOPIC_ID = :topic_id", nativeQuery = true)
+    // Topic TopicUpdateByTopicId(@Param("topic_id") String topic_id,
+    //                            @Param("location_lat") double location_lat,
+    //                            @Param("location_lng") double location_lng,
+    //                            @Param("cover_distance") double cover_distance,
+    //                            @Param("lifetime") int lifetime);
 }
 
