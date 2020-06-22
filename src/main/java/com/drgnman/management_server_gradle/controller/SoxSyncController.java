@@ -19,7 +19,8 @@ public class SoxSyncController {
     @RequestMapping("/soxsync")
     @ResponseBody
     public String index() {
-        soxSyncService.soxSync("ssm-soxfire.ht.sfc.keio.ac.jp");
+        // soxSyncService.soxSync("ssm-soxfire.ht.sfc.keio.ac.jp");
+        soxSyncService.soxSync("localhost");
 
         return "Hello World!";
     }

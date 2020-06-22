@@ -1,6 +1,11 @@
 package com.drgnman.management_server_gradle.service;
 
+import com.drgnman.management_server_gradle.Entity.Topic;
+import com.drgnman.management_server_gradle.Repository.DataRepository;
+import com.drgnman.management_server_gradle.Repository.TopicRepository;
 import com.drgnman.management_server_gradle.common.CommonSoxProcess;
+import com.drgnman.management_server_gradle.common.CommonSoxSubscribe;
+import jp.ac.keio.sfc.ht.sox.protocol.Device;
 import jp.ac.keio.sfc.ht.sox.soxlib.SoxConnection;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -8,14 +13,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.text.BreakIterator;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class SoxSyncService {
+    @Autowired
+    TopicRepository topicRepository;
+    @Autowired
+    DataRepository dataRepository;
     // region デバイス名一覧取得テスト
     CommonSoxProcess soxproc = new CommonSoxProcess();
+    CommonSoxSubscribe subscriber = new CommonSoxSubscribe();
 
     public void soxSync(String url) {
         try {
@@ -23,20 +31,22 @@ public class SoxSyncService {
             SoxConnection con = soxproc.CreateSoxConnection(url);
             List<String> nodeList = con.getAllSensorList();
 
-            // 取得したノード名ごとに何か処理を行わせる
-            for (String node : nodeList) {
+            for (String node: nodeList) {
                 System.out.println(node);
+                Device device = soxproc.DeviceInfo(con, node);
+                Topic topic = new Topic();
+                topic.setTopic_id(device.getId());
+                topic.setCategory(device.getDeviceType().toString());
+                topic.setAddress1("");
+                topic.setAddress2("");
+                // 現状、初期値が全くないため、仮置き
+                topic.setLifetime(1000);
+                topic.setLocation_lat(0.0);
+                topic.setLocation_lng(0.0);
+                topic.setCover_distance(1000);
+                topicRepository.save(topic);
 
-                List<String> words = new ArrayList<>();
-                BreakIterator boundary = BreakIterator.getWordInstance();
-                boundary.setText(node);
-                for (int start = boundary.first(), end = boundary.last();
-                     end != BreakIterator.DONE; start = end, end = boundary.next()) {
-                    words.add(node.substring(start, end));
-                }
-                for (String word: words) {
-                    System.out.println(word);
-                }
+                subscriber.CommonSoxSubscribe(con, topicRepository, dataRepository,device.getId());
             }
 
         System.out.println(nodeList.size());
@@ -53,6 +63,8 @@ public class SoxSyncService {
             noResponseException.printStackTrace();
         } catch (SmackException smackException) {
             smackException.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         // region Subscribe用コード
