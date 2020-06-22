@@ -30,5 +30,18 @@ public interface TopicRepository extends JpaRepository<Topic, Integer> {
     // 単純検索(Topic ID検索)
     @Query(value = "SELECT * FROM TOPIC WHERE TOPIC_ID = :topic_id", nativeQuery = true)
     Topic TopicSearchByTopicId(@Param("topic_id") String topic_id);
+
+    // うまく動かないため、saveメソッドで代用
+    // // LifeTimeの更新(Topic ID指定による)
+    // @Query(value = "UPDATE TOPIC SET LIFETIME = :lifetime  WHERE TOPIC_ID = :topic_id", nativeQuery = true)
+    // Topic TopicUpdateLifetimeByTopicId(@Param("topic_id") String topic_id, @Param("lifetime") int lifetime);
+
+    // // Location, LifeTimeの更新(Topic ID指定による)
+    // @Query(value = "UPDATE TOPIC SET LOCATION_LAT = :location_lat, LOCATION_LNG = :location_lng, COVER_DISTANCE = :cover_distance, LIFETIME = :lifetime  WHERE TOPIC_ID = :topic_id", nativeQuery = true)
+    // Topic TopicUpdateByTopicId(@Param("topic_id") String topic_id,
+    //                            @Param("location_lat") double location_lat,
+    //                            @Param("location_lng") double location_lng,
+    //                            @Param("cover_distance") double cover_distance,
+    //                            @Param("lifetime") int lifetime);
 }
 
