@@ -78,10 +78,6 @@ public class SearchController {
         // TOPIC DTOオブジェクトの生成
         SearchDTO searchObj = new SearchDTO();
 
-        // 戻り値格納用の変数
-        List<DataDTO> resultList;
-        String json;
-
         // RequestParamの設定
         // if (!("".equals(topicId))) searchObj.setTopic_id(topicId);
         // searchObj.setCategory(category);
@@ -93,13 +89,16 @@ public class SearchController {
         // if (!("".equals((distance)))) searchObj.setCover_distance(Double.parseDouble(distance));
 
         ObjectMapper mapper = new ObjectMapper();
-        // mode="simple"の場合, simpleSearch mode="discover"の場合、distanceSearch
+
+        // 戻り値格納用の変数
+        List<DataDTO> resultList;
+        String json;
+
         resultList = searchService.complexSearch(searchObj);
         Map<String, List<DataDTO>> topicMap = new HashMap<>();
         topicMap.put("testData", resultList);
         json = mapper.writeValueAsString(topicMap);
 
         return json;
-        // return result;
     }
 }
