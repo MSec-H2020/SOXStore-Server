@@ -24,7 +24,7 @@ public class SearchService {
 
     final static ModelMapper modelMapper = new ModelMapper();
 
-    // 単純なキーワード検索機能
+    // region 単純なキーワード検索機能
     public TopicDTO simpleSearch (TopicDTO searchObj) {
         try {
             // トピックIDが一致するレコードを一件取得
@@ -37,8 +37,9 @@ public class SearchService {
             return searchObj;
         }
     }
+    // endregion
 
-    // 距離による検索機能
+    // region 距離による検索機能
     public List<TopicDTO> distanceSearch (TopicDTO searchObj) {
         try {
             // 位置情報と検索範囲ベースでトピック検索をするクエリの発行
@@ -72,22 +73,34 @@ public class SearchService {
             return  result;
         }
     }
+    // endregion
 
-    // 複雑検索機能
+    // region 複雑検索機能
     public List<DataDTO> complexSearch (SearchDTO searchObj) {
         try {
-            // トピックIDが一致するレコードを全件取得
-            // そのトピックごとに最新のDataRecordを取得
-
-            List<Object> resultList = topicRepository.TopicSearchForComplexLocation(
-                    searchObj.getLocation_lat(),
-                    searchObj.getLocation_lng(),
-                    searchObj.getDestination_lat(),
-                    searchObj.getDestination_lng(),
-                    searchObj.getExpect_time());
-
             // DataObjectを格納する用
             List<DataDTO>  dataList = new ArrayList<DataDTO>();
+
+            // 現在地の周辺のイベントを探る
+            List<Object> resultList = topicRepository.TopicSearchForDistance(
+                    searchObj.getLocation_lat(),
+                    searchObj.getLocation_lng(),
+                    searchObj.getRange());
+
+            // 取得したTOPICから該当するするデータを取得する
+            for (int i=0; i < resultList.size(); i++) {
+                String topic_id = (String ) Array.get(resultList.get(i), 0);     // トピックIDの取得
+                Data data = dataRepository.DataSearchByTopicIdLimit1(topic_id);
+                DataDTO dataDTO = modelMapper.map(data, DataDTO.class);
+                dataList.add(dataDTO);
+            }
+
+            // 目的地の周辺のイベントを探る
+            resultList = topicRepository.TopicSearchForDestinationAndRange(
+                    searchObj.getDestination_lat(),
+                    searchObj.getDestination_lng(),
+                    searchObj.getRange(),
+                    searchObj.getExpect_time());
 
             // 取得したTOPICから該当するするデータを取得する
             for (int i=0; i < resultList.size(); i++) {
@@ -106,4 +119,6 @@ public class SearchService {
             return dataList;
         }
     }
+    // endregion
+
 }
