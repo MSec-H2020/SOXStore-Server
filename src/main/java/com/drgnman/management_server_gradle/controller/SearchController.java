@@ -1,5 +1,6 @@
 package com.drgnman.management_server_gradle.controller;
 
+import com.drgnman.management_server_gradle.common.CommonInstance;
 import com.drgnman.management_server_gradle.dto.DataDTO;
 import com.drgnman.management_server_gradle.dto.SearchDTO;
 import com.drgnman.management_server_gradle.dto.TopicDTO;
@@ -21,6 +22,7 @@ public class SearchController {
     SearchService searchService;
     @RequestMapping("/search")
     @ResponseBody
+    // region Searchメソッド
     public String search(
             @RequestParam(value = "topicId", defaultValue = "") String topicId,
             @RequestParam(value = "category", defaultValue = "") String category,
@@ -42,7 +44,11 @@ public class SearchController {
         searchObj.setCategory(category);
         if (!("".equals(lat))) searchObj.setLocation_lat(Double.parseDouble(lat));
         if (!("".equals(lng))) searchObj.setLocation_lng(Double.parseDouble(lng));
-        if (!("".equals((distance)))) searchObj.setCover_distance(Double.parseDouble(distance));
+        if (!("".equals((distance)))){
+            searchObj.setCover_distance(Double.parseDouble(distance));
+        } else {
+            searchObj.setCover_distance(CommonInstance.default_distance);
+        }
 
         ObjectMapper mapper = new ObjectMapper();
         // mode="simple"の場合, simpleSearch mode="discover"の場合、distanceSearch
@@ -61,9 +67,11 @@ public class SearchController {
         return json;
         // return result;
     }
+    // endregion
 
     @RequestMapping("/search/complex")
     @ResponseBody
+    // region complexSearchメソッド
     public String complexSearch(
             // @RequestParam(value = "topicId", defaultValue = "") String topicId,
             // @RequestParam(value = "category", defaultValue = "") String category,
@@ -71,8 +79,8 @@ public class SearchController {
             @RequestParam(value = "lng", defaultValue = "") String lng,
             @RequestParam(value = "dest_lat", defaultValue = "") String dest_lat,
             @RequestParam(value = "dest_lng", defaultValue = "") String dest_lng,
-            @RequestParam(value = "expect_time", defaultValue = "") String expect_time) throws JsonProcessingException {
-            // @RequestParam(value = "distance", defaultValue = "") String distance,
+            @RequestParam(value = "expect_time", defaultValue = "") String expect_time,
+            @RequestParam(value = "distance", defaultValue = "") String distance) throws JsonProcessingException {
             // @RequestParam(value = "mode", defaultValue ="simple") String mode) throws JsonProcessingException {
 
         // TOPIC DTOオブジェクトの生成
@@ -86,7 +94,12 @@ public class SearchController {
         if (!("".equals(dest_lat))) searchObj.setDestination_lat(Double.parseDouble(dest_lat));
         if (!("".equals(dest_lng))) searchObj.setDestination_lat(Double.parseDouble(dest_lng));
         if (!("".equals(expect_time))) searchObj.setExpect_time(Integer.parseInt(expect_time));
-        // if (!("".equals((distance)))) searchObj.setCover_distance(Double.parseDouble(distance));
+
+        if (!("".equals((distance)))) {
+            searchObj.setRange(Double.parseDouble(distance));
+        } else {
+            searchObj.setRange(CommonInstance.default_distance);
+        }
 
         ObjectMapper mapper = new ObjectMapper();
 
@@ -101,4 +114,6 @@ public class SearchController {
 
         return json;
     }
+    // endregion
+
 }
