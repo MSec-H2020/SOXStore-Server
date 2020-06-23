@@ -10,7 +10,7 @@ import java.util.List;
 public class CommonCalculation {
     final static ModelMapper modelMapper = new ModelMapper();
 
-    // レコードのタイムスタンプからパブリッシュ頻度を計算する
+    // region レコードのタイムスタンプからパブリッシュ頻度を計算する
     public int calcAverage(DataRepository dataRepository, String topicId) {
         try {
             // トピックIDが一致するレコードを全取得
@@ -76,4 +76,6 @@ public class CommonCalculation {
             return -1;
         }
     }
+    // endregion
+
 }
