@@ -31,6 +31,15 @@ public interface TopicRepository extends JpaRepository<Topic, Integer> {
     @Query(value = "SELECT * FROM TOPIC WHERE TOPIC_ID = :topic_id", nativeQuery = true)
     Topic TopicSearchByTopicId(@Param("topic_id") String topic_id);
 
+    @Query(value = "SELECT * FROM TOPIC WHERE (LOCATION_LAT = :current_lat AND LOCATION_LNG = :current_lng) " +
+            "OR (LOCATION_LAT = :dest_lat AND LOCATION_LNG = :dest_lng AND LIFETIME <= :expect_time)", nativeQuery = true)
+    List<Object> TopicSearchForComplexLocation(
+            @Param("current_lat") double current_lat,
+            @Param("current_lng") double current_lng,
+            @Param("dest_lat") double dest_lat,
+            @Param("dest_lng") double dest_lng,
+            @Param("expect_time") int expect_time
+    );
     // うまく動かないため、saveメソッドで代用
     // // LifeTimeの更新(Topic ID指定による)
     // @Query(value = "UPDATE TOPIC SET LIFETIME = :lifetime  WHERE TOPIC_ID = :topic_id", nativeQuery = true)
