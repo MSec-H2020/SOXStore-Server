@@ -1,22 +1,26 @@
 package com.drgnman.management_server_gradle.service;
 
+import com.drgnman.management_server_gradle.Entity.Data;
 import com.drgnman.management_server_gradle.Entity.Topic;
+import com.drgnman.management_server_gradle.Repository.DataRepository;
 import com.drgnman.management_server_gradle.Repository.TopicRepository;
+import com.drgnman.management_server_gradle.dto.DataDTO;
+import com.drgnman.management_server_gradle.dto.SearchDTO;
 import com.drgnman.management_server_gradle.dto.TopicDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @Service
 public class SearchService {
     @Autowired
-    TopicRepository repository;
+    TopicRepository topicRepository;
+    @Autowired
+    DataRepository dataRepository;
 
     final static ModelMapper modelMapper = new ModelMapper();
 
@@ -24,7 +28,7 @@ public class SearchService {
     public TopicDTO simpleSearch (TopicDTO searchObj) {
         try {
             // トピックIDが一致するレコードを一件取得
-            Topic topic = repository.TopicSearchByTopicId(searchObj.getTopic_id());
+            Topic topic = topicRepository.TopicSearchByTopicId(searchObj.getTopic_id());
             TopicDTO result = modelMapper.map(topic, TopicDTO.class);
             return result;
         } catch (Exception e) {
@@ -34,11 +38,11 @@ public class SearchService {
         }
     }
 
-    // 複雑検索機能
+    // 距離による検索機能
     public List<TopicDTO> distanceSearch (TopicDTO searchObj) {
         try {
             // 位置情報と検索範囲ベースでトピック検索をするクエリの発行
-            List<Object> resultList = repository.TopicSearchForDistance(
+            List<Object> resultList = topicRepository.TopicSearchForDistance(
                     searchObj.getLocation_lat(), searchObj.getLocation_lng(), searchObj.getCover_distance());
             // return用のオブジェクトの用意
             List<TopicDTO> topicList = new ArrayList<TopicDTO>();
@@ -52,7 +56,7 @@ public class SearchService {
                 for (int j=0; j<length; j++) {
                     list.add(Array.get(resultList.get(i), j));
                 }
-                result.setTopic_id((String) list.get(0));        // トピックNo.
+                result.setTopic_id((String) list.get(0));        // トピックID
                 result.setCategory((String) list.get(1));         // カテゴリ名
                 result.setLocation_lat((Double) list.get(2));     // 位置情報(緯度)
                 result.setLocation_lng((Double) list.get(3));     // 位置情報(経度)
@@ -66,6 +70,40 @@ public class SearchService {
             List<TopicDTO> result = null;
             result.add(searchObj);
             return  result;
+        }
+    }
+
+    // 複雑検索機能
+    public List<DataDTO> complexSearch (SearchDTO searchObj) {
+        try {
+            // トピックIDが一致するレコードを全件取得
+            // そのトピックごとに最新のDataRecordを取得
+
+            List<Object> resultList = topicRepository.TopicSearchForComplexLocation(
+                    searchObj.getLocation_lat(),
+                    searchObj.getLocation_lng(),
+                    searchObj.getDestination_lat(),
+                    searchObj.getDestination_lng(),
+                    searchObj.getExpect_time());
+
+            // DataObjectを格納する用
+            List<DataDTO>  dataList = new ArrayList<DataDTO>();
+
+            // 取得したTOPICから該当するするデータを取得する
+            for (int i=0; i < resultList.size(); i++) {
+                String topic_id = (String ) Array.get(resultList.get(i), 0);     // トピックIDの取得
+                Data data = dataRepository.DataSearchByTopicIdLimit1(topic_id);
+                DataDTO dataDTO = modelMapper.map(data, DataDTO.class);
+                dataList.add(dataDTO);
+            }
+
+            return dataList;
+
+        } catch (Exception e) {
+            // 検索がコケた場合には空のリストを返しておく
+            System.out.println("Error: " + e);
+            List<DataDTO>  dataList = new ArrayList<DataDTO>();
+            return dataList;
         }
     }
 }
