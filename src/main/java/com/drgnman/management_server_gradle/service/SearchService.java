@@ -75,8 +75,39 @@ public class SearchService {
     }
     // endregion
 
-    // region 複雑検索機能
-    public List<DataDTO> complexSearch (SearchDTO searchObj) {
+    // region 複雑検索機能(トピック取得部)
+    // public List<TopicDTO> complexTopicSearch (SearchDTO searchObj) {
+    //     try {
+    //         // DataObjectを格納する用
+    //         List<TopicDTO>  topicList = new ArrayList<TopicDTO>();
+
+    //         // ここで取得するトピックはLIFEタイムも関係なく取れるものはとるようにした方が良い？
+    //         // 現在地の周辺のイベントを探る
+    //         List<Object> resultList = topicRepository.TopicSearchForDistance(
+    //                 searchObj.getLocation_lat(),
+    //                 searchObj.getLocation_lng(),
+    //                 searchObj.getRange());
+
+    //         // 目的地の周辺のイベントを探る
+    //         resultList = topicRepository.TopicSearchForDestinationAndRange(
+    //                 searchObj.getDestination_lat(),
+    //                 searchObj.getDestination_lng(),
+    //                 searchObj.getRange(),
+    //                 searchObj.getExpect_time());
+
+    //         return topicList;
+
+    //     } catch (Exception e) {
+    //         // 検索がコケた場合には空のリストを返しておく
+    //         System.out.println("Error: " + e);
+    //         List<TopicDTO>  topicList = new ArrayList<TopicDTO>();
+    //         return topicList;
+    //     }
+    // }
+    // endregion
+
+    // region 複雑検索機能(データ取得部)
+    public List<DataDTO> complexDataSearch (SearchDTO searchObj) {
         try {
             // DataObjectを格納する用
             List<DataDTO>  dataList = new ArrayList<DataDTO>();
@@ -87,24 +118,23 @@ public class SearchService {
                     searchObj.getLocation_lng(),
                     searchObj.getRange());
 
-            // 取得したTOPICから該当するするデータを取得する
-            for (int i=0; i < resultList.size(); i++) {
-                String topic_id = (String ) Array.get(resultList.get(i), 0);     // トピックIDの取得
-                Data data = dataRepository.DataSearchByTopicIdLimit1(topic_id);
-                DataDTO dataDTO = modelMapper.map(data, DataDTO.class);
-                dataList.add(dataDTO);
+            // 目的地の周辺のイベントを探る
+            for (int i=0; i < searchObj.getDestination_lng().size(); i++) {
+                List<Object>tmp_List = topicRepository.TopicSearchForDestinationAndRange(
+                        searchObj.getDestination_lat().get(i),
+                        searchObj.getDestination_lng().get(i),
+                        searchObj.getRange(),
+                        searchObj.getExpect_time().get(i)
+                );
+                for (Object tmp : tmp_List) {
+                    // resultListにtopicSearchの結果を追加する
+                    resultList.add(tmp);
+                }
             }
 
-            // 目的地の周辺のイベントを探る
-            resultList = topicRepository.TopicSearchForDestinationAndRange(
-                    searchObj.getDestination_lat(),
-                    searchObj.getDestination_lng(),
-                    searchObj.getRange(),
-                    searchObj.getExpect_time());
-
-            // 取得したTOPICから該当するするデータを取得する
+            // 取得したTOPICから該当するデータを取得する
             for (int i=0; i < resultList.size(); i++) {
-                String topic_id = (String ) Array.get(resultList.get(i), 0);     // トピックIDの取得
+                String topic_id = (String) Array.get(resultList.get(i), 0);     // トピックIDの取得
                 Data data = dataRepository.DataSearchByTopicIdLimit1(topic_id);
                 DataDTO dataDTO = modelMapper.map(data, DataDTO.class);
                 dataList.add(dataDTO);
