@@ -12,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,12 +77,13 @@ public class SearchController {
     public String complexSearch(
             // @RequestParam(value = "topicId", defaultValue = "") String topicId,
             // @RequestParam(value = "category", defaultValue = "") String category,
-            @RequestParam(value = "lat", defaultValue = "") String lat,
-            @RequestParam(value = "lng", defaultValue = "") String lng,
-            @RequestParam(value = "dest_lat", defaultValue = "") String dest_lat,
-            @RequestParam(value = "dest_lng", defaultValue = "") String dest_lng,
-            @RequestParam(value = "expect_time", defaultValue = "") String expect_time,
-            @RequestParam(value = "distance", defaultValue = "") String distance) throws JsonProcessingException {
+            @RequestParam(value = "lat", defaultValue = "") double lat,
+            @RequestParam(value = "lng", defaultValue = "") double lng,
+            @RequestParam(value = "dest_lat", defaultValue = "") ArrayList<Double> dest_lat,
+            @RequestParam(value = "dest_lng", defaultValue = "") ArrayList<Double> dest_lng,
+            @RequestParam(value = "expect_time", defaultValue = "") ArrayList<Integer> expect_time,
+            @RequestParam(value = "speed", defaultValue = "") double speed,
+            @RequestParam(value = "distance", defaultValue = "") double distance) throws JsonProcessingException {
             // @RequestParam(value = "mode", defaultValue ="simple") String mode) throws JsonProcessingException {
 
         // TOPIC DTOオブジェクトの生成
@@ -89,14 +92,15 @@ public class SearchController {
         // RequestParamの設定
         // if (!("".equals(topicId))) searchObj.setTopic_id(topicId);
         // searchObj.setCategory(category);
-        if (!("".equals(lat))) searchObj.setLocation_lat(Double.parseDouble(lat));
-        if (!("".equals(lng))) searchObj.setLocation_lng(Double.parseDouble(lng));
-        if (!("".equals(dest_lat))) searchObj.setDestination_lat(Double.parseDouble(dest_lat));
-        if (!("".equals(dest_lng))) searchObj.setDestination_lat(Double.parseDouble(dest_lng));
-        if (!("".equals(expect_time))) searchObj.setExpect_time(Integer.parseInt(expect_time));
+        if (!("".equals(lat))) searchObj.setLocation_lat(lat);
+        if (!("".equals(lng))) searchObj.setLocation_lng(lng);
+        if (!("".equals(dest_lat))) searchObj.setDestination_lat(dest_lat);
+        if (!("".equals(dest_lng))) searchObj.setDestination_lng(dest_lng);
+        if (!("".equals(expect_time))) searchObj.setExpect_time(expect_time);
+        if (!("".equals(speed))) searchObj.setSpeed(speed);
 
         if (!("".equals((distance)))) {
-            searchObj.setRange(Double.parseDouble(distance));
+            searchObj.setRange(distance);
         } else {
             searchObj.setRange(CommonInstance.default_distance);
         }
@@ -104,13 +108,17 @@ public class SearchController {
         ObjectMapper mapper = new ObjectMapper();
 
         // 戻り値格納用の変数
-        List<DataDTO> resultList;
+        List<TopicDTO> topicResultList;
+        List<DataDTO> dataResultList;
         String json;
 
-        resultList = searchService.complexSearch(searchObj);
-        Map<String, List<DataDTO>> topicMap = new HashMap<>();
-        topicMap.put("testData", resultList);
-        json = mapper.writeValueAsString(topicMap);
+        // topicResultList = searchService.complexSearch(searchObj);
+        dataResultList = searchService.complexDataSearch(searchObj);
+        Map<String, List<DataDTO>> dataMap = new HashMap<>();
+        dataMap.put("dataList", dataResultList);
+        json = mapper.writeValueAsString(dataMap);
+        json = json.substring(0, json.length()-1);
+        json += " ,\"request_time\": " + (distance/2)/speed +"}";
 
         return json;
     }
