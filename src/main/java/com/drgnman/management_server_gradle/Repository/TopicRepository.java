@@ -38,7 +38,7 @@ public interface TopicRepository extends JpaRepository<Topic, Integer> {
 
     // region 目的地周辺のデータを検索
     // 現在地の座標もしくは目的地の座標と経過予測時間が大きなものを取得するクエリ(検索範囲を追加したversion.)
-    @Query(value = "SELECT TOPIC_ID, " +
+    @Query(value = "SELECT TOPIC_ID, (" +
             "6371 * acos(" +
             "cos(radians(:dest_lat))" +
             "* cos(radians(LOCATION_LAT))" +
@@ -47,7 +47,7 @@ public interface TopicRepository extends JpaRepository<Topic, Integer> {
             "* sin(radians(LOCATION_LAT))" +
             ")" +
             ") AS TEMP_DISTANCE " +
-            " FROM TOPIC WHERE LIFETIME = :expect_time HAVING CURRENT_DISTANCE <= :distance", nativeQuery = true) // SQL
+            " FROM TOPIC WHERE :expect_time < LIFETIME HAVING TEMP_DISTANCE <= :distance", nativeQuery = true) // SQL
     List<Object> TopicSearchForDestinationAndRange(
             @Param("dest_lat") double dest_lat,
             @Param("dest_lng") double dest_lng,
