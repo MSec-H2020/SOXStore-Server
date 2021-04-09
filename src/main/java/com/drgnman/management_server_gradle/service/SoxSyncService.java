@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.List;
 
 @Service
 public class SoxSyncService {
@@ -25,32 +24,16 @@ public class SoxSyncService {
     CommonSoxProcess soxproc = new CommonSoxProcess();
     CommonSoxSubscribe subscriber = new CommonSoxSubscribe();
 
-    public void soxSync(String url) {
+    public void soxSync(String url, String user, String pass, String node) {
         try {
-            //
-            SoxConnection con = soxproc.CreateSoxConnection(url);
-            List<String> nodeList = con.getAllSensorList();
-
-            for (String node: nodeList) {
-                System.out.println(node);
-                Device device = soxproc.DeviceInfo(con, node);
-                Topic topic = new Topic();
-                topic.setTopic_id(device.getId());
-                topic.setCategory(device.getDeviceType().toString());
-                topic.setAddress1("");
-                topic.setAddress2("");
-                // 現状、初期値が全くないため、仮置き
-                topic.setLifetime(1000);
-                topic.setLocation_lat(0.0);
-                topic.setLocation_lng(0.0);
-                topic.setCover_distance(1000);
-                topicRepository.save(topic);
-
-                subscriber.CommonSoxSubscribe(con, topicRepository, dataRepository,device.getId());
-            }
-
-        System.out.println(nodeList.size());
-
+            SoxConnection con = soxproc.CreateSoxConnection(url, user, pass);
+            System.out.println(node);
+            Device device = soxproc.DeviceInfo(con, node);
+            Topic topic = new Topic();
+            topic.setTopic_id(device.getId());
+            topic.setCategory(device.getDeviceType().toString());
+            topicRepository.save(topic);
+            subscriber.CommonSoxSubscribe(con, topicRepository, dataRepository,device.getId());
         } catch (IOException ioException) {
             ioException.printStackTrace();
         } catch (XMPPException.XMPPErrorException xmppErrorException) {
