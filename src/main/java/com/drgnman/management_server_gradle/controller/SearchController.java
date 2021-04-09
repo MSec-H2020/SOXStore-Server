@@ -4,6 +4,7 @@ import com.drgnman.management_server_gradle.Entity.Data;
 import com.drgnman.management_server_gradle.Repository.DataRepository;
 import com.drgnman.management_server_gradle.dto.DataDTO;
 import com.drgnman.management_server_gradle.dto.DeviceDTO;
+import com.drgnman.management_server_gradle.dto.PublishDTO;
 import com.drgnman.management_server_gradle.dto.SearchDTO;
 import com.drgnman.management_server_gradle.service.SearchService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,9 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jp.ac.keio.sfc.ht.sox.protocol.Device;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +23,30 @@ public class SearchController {
     @Autowired
     SearchService searchService;
     // SOXから特定デバイスのsubscribeを開始してデータをStoreに保持する
+    @RequestMapping(value="/publish", method = RequestMethod.POST)
+    @ResponseBody
+    // region Searchメソッド
+    public String publish(
+            // @RequestParam(value = "server_address", defaultValue = "") String server_address,
+            // @RequestParam(value = "sox_user", defaultValue = "") String sox_user,
+            // @RequestParam(value = "sox_pass", defaultValue = "") String sox_pass,
+            // @RequestParam(value = "theme", defaultValue = "") String theme,
+            // @RequestParam(value = "username", defaultValue = "") String username,
+            // @RequestParam(value = "latitude", defaultValue = "") String latitude,
+            // @RequestParam(value = "longitude", defaultValue = "") String longitude,
+            // @RequestParam(value = "smiledegree", defaultValue = "") String smiledegree,
+            // @RequestParam(value = "imagephoto", defaultValue = "") String imagephoto
+            @RequestBody PublishDTO publishObj
+            ) throws JsonProcessingException {
+        // TOPIC DTOオブジェクトの生成
+
+        // 戻り値格納用の変数
+        String result_msg = searchService.publish(publishObj);
+
+        return result_msg;
+    }
+
+    // endregion
     @RequestMapping("/search")
     @ResponseBody
     // region Searchメソッド
