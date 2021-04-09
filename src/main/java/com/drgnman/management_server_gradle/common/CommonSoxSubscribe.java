@@ -9,15 +9,30 @@ import jp.ac.keio.sfc.ht.sox.soxlib.SoxConnection;
 import jp.ac.keio.sfc.ht.sox.soxlib.SoxDevice;
 import jp.ac.keio.sfc.ht.sox.soxlib.event.SoxEvent;
 import jp.ac.keio.sfc.ht.sox.soxlib.event.SoxEventListener;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 public class CommonSoxSubscribe implements SoxEventListener {
 
     TopicRepository topicRepository = null;
     DataRepository dataRepository = null;
-    CommonCalculation cmnCalc = new CommonCalculation();
-    CommonInstance cmnIns = new CommonInstance();
-    public void CommonSoxSubscribe(SoxConnection con, TopicRepository topicRepository,DataRepository dataRepository, String device_name) throws Exception {
+    // Connection db_con = null;
+    // PreparedStatement ps = null;
+    // CommonDBConnector dbconnector = new CommonDBConnector();
+    // String db_url = null;
+    // String db_user = null;
+    // String db_pass = null;
+    // String sql = "INSERT INTO topic values(?, ?)";
+
+    public CommonSoxSubscribe(SoxConnection con, TopicRepository topicRepository,DataRepository dataRepository, String device_name) throws Exception {
+    // public void CommonSoxSubscribe(SoxConnection con, String device_name, String db_url, String db_user, String db_pass) throws Exception {
+        // this.db_url = db_url;
+        // this.db_user = db_user;
+        // this.db_pass = db_pass;
+
         // region Subscribeの一連処理
         SoxDevice subscribeDevice = new SoxDevice(con, device_name);
         this.topicRepository = topicRepository;
@@ -31,8 +46,8 @@ public class CommonSoxSubscribe implements SoxEventListener {
    public void handlePublishedSoxEvent(SoxEvent soxEvent) {
         List<TransducerValue> values = soxEvent.getTransducerValues();
        // subscribeした値への処理を追記すること
-       Data data = new Data();
        for (TransducerValue value : values) {
+           Data data = new Data();
            System.out.println("TransducerValue[id:" + value.getId()
                    + ", rawValue:" + value.getRawValue() + ", typedValue:"
                    + value.getTypedValue() + ", timestamp:"
@@ -41,35 +56,34 @@ public class CommonSoxSubscribe implements SoxEventListener {
            data.setTopic_id(soxEvent.getDevice().getId());
            // データIDの設定(データIDが存在しない場合は、トピックIDを割り当てる)
            if (value.getId() != null) {
-               data.setData_id(value.getId());
+               data.setTransducer_id(value.getId());
            } else {
-               data.setData_id(soxEvent.getDevice().getId());
+               data.setTransducer_id(soxEvent.getDevice().getId());
            }
-           // 位置情報の格納(transducer名がlatitude, longitudeの場合は設定する。
-           if (cmnIns.lat.equals(value.getId())) {
-               data.setLocation_lat(Double.parseDouble(value.getRawValue()));
-           } else if (cmnIns.lng.equals(value.getId())) {
-               data.setLocation_lng(Double.parseDouble(value.getRawValue()));
-           } else if (cmnIns.range.equals(value.getId())) {
-               data.setCover_distance(Double.parseDouble(value.getRawValue()));
-           } else {
-               // 上記以外の場合、データ本体として値をセットする
-               data. setValue(value.getRawValue());
-           }
+           // とりあえず全部、valueに突っ込ませる
+           data.setValue(value.getRawValue());
            // timestampの設定
-           if (data.getTimestamp() == null) data.setPub_timestamp(value.getTimestamp());
+           data.setPub_timestamp(value.getTimestamp());
+
+           dataRepository.save(data);
+
        }
        // dataの保存
-       dataRepository.save(data);
+       // dataRepository.save(data);
 
-       // topicの情報更新
-       int ave_time = cmnCalc.calcAverage(dataRepository, soxEvent.getDevice().getId());
-       Topic topic = topicRepository.TopicSearchByTopicId(soxEvent.getDevice().getId());
-       topic.setLocation_lat(data.getLocation_lat());
-       topic.setLocation_lng(data.getLocation_lng());
-       topic.setCover_distance(data.getCover_distance());
-       topic.setLifetime(ave_time);
-
-       topicRepository.save(topic);
+       // region jdbc ver.
+       // if (db_con == null) db_con = dbconnector.dbConnection(db_url, db_user, db_pass);
+       // try {
+       //     ps = db_con.prepareStatement(sql);
+       //     ps.setString(1, data.getTopic_id());
+       //     ps.setString(2, data.getData_id());
+       //     ps.setString(3, data.getValue());
+       //     int result = ps.executeUpdate();
+       //     db_con.commit();
+       //     db_con.setAutoCommit(false);
+       // } catch (SQLException throwables) {
+       //     throwables.printStackTrace();
+       // }
+       // endregion
    }
 }

@@ -4,151 +4,111 @@ import com.drgnman.management_server_gradle.Entity.Data;
 import com.drgnman.management_server_gradle.Entity.Topic;
 import com.drgnman.management_server_gradle.Repository.DataRepository;
 import com.drgnman.management_server_gradle.Repository.TopicRepository;
-import com.drgnman.management_server_gradle.dto.DataDTO;
+import com.drgnman.management_server_gradle.common.CommonDBConnector;
+import com.drgnman.management_server_gradle.dto.DeviceDTO;
 import com.drgnman.management_server_gradle.dto.SearchDTO;
-import com.drgnman.management_server_gradle.dto.TopicDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
+import javax.sql.DataSource;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SearchService {
     @Autowired
-    TopicRepository topicRepository;
+    SoxSyncService soxSyncService;
     @Autowired
     DataRepository dataRepository;
+    @Autowired
+    TopicRepository topicRepository;
+    // @Autowired
+    // CommonDBConnector commonDBConnector;
 
     final static ModelMapper modelMapper = new ModelMapper();
 
-    // region 単純なキーワード検索機能
-    public TopicDTO simpleSearch (TopicDTO searchObj) {
+    // region SOXにSubscribeを行う
+    public String search (SearchDTO searchObj) {
         try {
-            // トピックIDが一致するレコードを一件取得
-            Topic topic = topicRepository.TopicSearchByTopicId(searchObj.getTopic_id());
-            TopicDTO result = modelMapper.map(topic, TopicDTO.class);
+            soxSyncService.soxSync(searchObj.getSox_address(), searchObj.getSox_user(), searchObj.getSox_pass(), searchObj.getNode_name());
+            return "success";
+        } catch (Exception e) {
+            // 検索がコケた場合にはとりあえず何か返しておく
+            System.out.println("Error: " + e);
+            return "failed";
+        }
+    }
+    // endregion
+
+    // region SOXにSubscribeを行う
+    public List<String> getAllDevices (SearchDTO searchObj) {
+        try {
+            List<String> nodeList = soxSyncService.soxGetDevices(searchObj.getSox_address(), searchObj.getSox_user(), searchObj.getSox_pass());
+            return nodeList;
+        } catch (Exception e) {
+            // 検索がコケた場合にはとりあえず何か返しておく
+            System.out.println("Error: " + e);
+            return null;
+        }
+    }
+    // endregion
+
+    // region SOXにSubscribeを行う
+    public List<DeviceDTO> getDeviceDetail (SearchDTO searchObj) {
+        try {
+            List<DeviceDTO> deviceList = soxSyncService.soxGetDeviceDetail(searchObj.getSox_address(), searchObj.getSox_user(), searchObj.getSox_pass(), searchObj.getNode_name());
+            return deviceList;
+        } catch (Exception e) {
+            // 検索がコケた場合にはとりあえず何か返しておく
+            System.out.println("Error: " + e);
+            return null;
+        }
+    }
+    // endregion
+
+    // region DBからTopicIDに応じた最新のデータをとってくる
+    public List<Data> getDeviceData (String nodeName, double time_from, double time_to) {
+        try {
+            List<Data> result = null;
+            if (time_to > 0 && time_from > 0) {
+                // time_toとtime_fromが設定された場合、データを検索する
+                result = dataRepository.TimestampSearchByTopicIdAndTimeFromTo(nodeName, time_from, time_to);
+                if (result == null) System.out.println("=====Data not Found!!=====");
+            } else if (time_from > 0) {
+                result = dataRepository.TimestampSearchByTopicIdAndTimeFrom(nodeName, time_from);
+                if (result == null) System.out.println("=====Data not Found!!=====");
+            }
+            else {
+                // topic_idから対象データの最新時間を取ってくる
+                Data data = dataRepository.TimestampSearchByTopicIdLimit1(nodeName);
+                result = dataRepository.DataSearchByTopicIDAndTimeStamp(nodeName, data.getPub_timestamp());
+            }
+            // 対象データの最新データだけを取ってくる
             return result;
         } catch (Exception e) {
             // 検索がコケた場合にはとりあえず何か返しておく
             System.out.println("Error: " + e);
-            return searchObj;
+            return null;
         }
     }
     // endregion
-
-    // region 距離による検索機能
-    public List<TopicDTO> distanceSearch (TopicDTO searchObj) {
-        try {
-            // 位置情報と検索範囲ベースでトピック検索をするクエリの発行
-            List<Object> resultList = topicRepository.TopicSearchForDistance(
-                    searchObj.getLocation_lat(), searchObj.getLocation_lng(), searchObj.getCover_distance());
-            // return用のオブジェクトの用意
-            List<TopicDTO> topicList = new ArrayList<TopicDTO>();
-
-            // Entity結果をDTOオブジェクトに格納 データ加工等の処理はここで実施
-            for (int i=0; i < resultList.size(); i++) {
-                // Object -> DTOの変換処理
-                TopicDTO result = new TopicDTO();
-                int length = Array.getLength(resultList.get(i));
-                List list = new ArrayList();
-                for (int j=0; j<length; j++) {
-                    list.add(Array.get(resultList.get(i), j));
-                }
-                result.setTopic_id((String) list.get(0));        // トピックID
-                result.setCategory((String) list.get(1));         // カテゴリ名
-                result.setLocation_lat((Double) list.get(2));     // 位置情報(緯度)
-                result.setLocation_lng((Double) list.get(3));     // 位置情報(経度)
-                topicList.add(result);
-            }
-            return topicList;
-
-        } catch (Exception e) {
-            // 検索がコケた場合にはとりあえず何か返しておく
-            System.out.println("Error : " + e);
-            List<TopicDTO> result = null;
-            result.add(searchObj);
-            return  result;
+    public List<String> getAllDevicesFromStoreDB () {
+        List<Topic> topicList = topicRepository.findAll();
+        List<String> resultList = new ArrayList<>();
+        for (Topic topic : topicList) {
+            resultList.add(topic.getTopic_id());
         }
+        return resultList;
     }
-    // endregion
-
-    // region 複雑検索機能(トピック取得部)
-    // public List<TopicDTO> complexTopicSearch (SearchDTO searchObj) {
-    //     try {
-    //         // DataObjectを格納する用
-    //         List<TopicDTO>  topicList = new ArrayList<TopicDTO>();
-
-    //         // ここで取得するトピックはLIFEタイムも関係なく取れるものはとるようにした方が良い？
-    //         // 現在地の周辺のイベントを探る
-    //         List<Object> resultList = topicRepository.TopicSearchForDistance(
-    //                 searchObj.getLocation_lat(),
-    //                 searchObj.getLocation_lng(),
-    //                 searchObj.getRange());
-
-    //         // 目的地の周辺のイベントを探る
-    //         resultList = topicRepository.TopicSearchForDestinationAndRange(
-    //                 searchObj.getDestination_lat(),
-    //                 searchObj.getDestination_lng(),
-    //                 searchObj.getRange(),
-    //                 searchObj.getExpect_time());
-
-    //         return topicList;
-
-    //     } catch (Exception e) {
-    //         // 検索がコケた場合には空のリストを返しておく
-    //         System.out.println("Error: " + e);
-    //         List<TopicDTO>  topicList = new ArrayList<TopicDTO>();
-    //         return topicList;
-    //     }
-    // }
-    // endregion
-
-    // region 複雑検索機能(データ取得部)
-    public List<DataDTO> complexDataSearch (SearchDTO searchObj) {
-        try {
-            // DataObjectを格納する用
-            List<DataDTO>  dataList = new ArrayList<DataDTO>();
-
-            // 現在地の周辺のイベントを探る
-            List<Object> resultList = topicRepository.TopicSearchForDistance(
-                    searchObj.getLocation_lat(),
-                    searchObj.getLocation_lng(),
-                    searchObj.getRange());
-
-            // 目的地の周辺のイベントを探る
-            for (int i=0; i < searchObj.getDestination_lng().size(); i++) {
-                List<Object>tmp_List = topicRepository.TopicSearchForDestinationAndRange(
-                        searchObj.getDestination_lat().get(i),
-                        searchObj.getDestination_lng().get(i),
-                        searchObj.getRange(),
-                        searchObj.getExpect_time().get(i)
-                );
-                for (Object tmp : tmp_List) {
-                    // resultListにtopicSearchの結果を追加する
-                    resultList.add(tmp);
-                }
-            }
-
-            // 取得したTOPICから該当するデータを取得する
-            for (int i=0; i < resultList.size(); i++) {
-                String topic_id = (String) Array.get(resultList.get(i), 0);     // トピックIDの取得
-                Data data = dataRepository.DataSearchByTopicIdLimit1(topic_id);
-                DataDTO dataDTO = modelMapper.map(data, DataDTO.class);
-                dataList.add(dataDTO);
-            }
-
-            return dataList;
-
-        } catch (Exception e) {
-            // 検索がコケた場合には空のリストを返しておく
-            System.out.println("Error: " + e);
-            List<DataDTO>  dataList = new ArrayList<DataDTO>();
-            return dataList;
-        }
-    }
-    // endregion
-
 }

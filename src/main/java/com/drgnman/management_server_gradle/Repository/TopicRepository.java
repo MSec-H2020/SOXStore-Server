@@ -12,7 +12,7 @@ import java.util.List;
 public interface TopicRepository extends JpaRepository<Topic, Integer> {
     // region 単純検索
     // 単純検索(Topic ID検索)
-    @Query(value = "SELECT * FROM TOPIC WHERE TOPIC_ID = :topic_id", nativeQuery = true)
+    @Query(value = "SELECT * FROM topic WHERE TOPIC_ID = topic:topic_id", nativeQuery = true)
     Topic TopicSearchByTopicId(@Param("topic_id") String topic_id);
     // endregion
 
@@ -28,7 +28,7 @@ public interface TopicRepository extends JpaRepository<Topic, Integer> {
             "* sin(radians(LOCATION_LAT))" +
             ")" +
             ") AS TEMP_DISTANCE" +
-            " FROM TOPIC HAVING TEMP_DISTANCE <= :distance", nativeQuery = true) // SQL
+            " FROM topic HAVING TEMP_DISTANCE <= :distance", nativeQuery = true) // SQL
     List<Object> TopicSearchForDistance(
               @Param("lat") double lat,
               @Param("lng") double lng,
@@ -47,7 +47,7 @@ public interface TopicRepository extends JpaRepository<Topic, Integer> {
             "* sin(radians(LOCATION_LAT))" +
             ")" +
             ") AS TEMP_DISTANCE " +
-            " FROM TOPIC WHERE :expect_time < LIFETIME HAVING TEMP_DISTANCE <= :distance", nativeQuery = true) // SQL
+            " FROM topic WHERE :expect_time < LIFETIME HAVING TEMP_DISTANCE <= :distance", nativeQuery = true) // SQL
     List<Object> TopicSearchForDestinationAndRange(
             @Param("dest_lat") double dest_lat,
             @Param("dest_lng") double dest_lng,
@@ -58,7 +58,7 @@ public interface TopicRepository extends JpaRepository<Topic, Integer> {
 
     // region 複合検索1(使わないかも)
     // 現在地の座標もしくは目的地の座標と経過予測時間が大きなものを取得するクエリ
-    @Query(value = "SELECT TOPIC_ID FROM TOPIC WHERE (LOCATION_LAT = :current_lat AND LOCATION_LNG = :current_lng) " +
+    @Query(value = "SELECT TOPIC_ID FROM topic WHERE (LOCATION_LAT = :current_lat AND LOCATION_LNG = :current_lng) " +
             "OR (LOCATION_LAT = :dest_lat AND LOCATION_LNG = :dest_lng AND LIFETIME <= :expect_time)", nativeQuery = true)
     List<Object> TopicSearchForComplexLocation(
             @Param("current_lat") double current_lat,
@@ -68,21 +68,5 @@ public interface TopicRepository extends JpaRepository<Topic, Integer> {
             @Param("expect_time") int expect_time
     );
     // endregion
-
-    // region 動かなかったupdateクエリ
-    // うまく動かないため、saveメソッドで代用
-    // // LifeTimeの更新(Topic ID指定による)
-    // @Query(value = "UPDATE TOPIC SET LIFETIME = :lifetime  WHERE TOPIC_ID = :topic_id", nativeQuery = true)
-    // Topic TopicUpdateLifetimeByTopicId(@Param("topic_id") String topic_id, @Param("lifetime") int lifetime);
-
-    // // Location, LifeTimeの更新(Topic ID指定による)
-    // @Query(value = "UPDATE TOPIC SET LOCATION_LAT = :location_lat, LOCATION_LNG = :location_lng, COVER_DISTANCE = :cover_distance, LIFETIME = :lifetime  WHERE TOPIC_ID = :topic_id", nativeQuery = true)
-    // Topic TopicUpdateByTopicId(@Param("topic_id") String topic_id,
-    //                            @Param("location_lat") double location_lat,
-    //                            @Param("location_lng") double location_lng,
-    //                            @Param("cover_distance") double cover_distance,
-    //                            @Param("lifetime") int lifetime);
-    // endregion
-
 }
 
