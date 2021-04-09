@@ -5,8 +5,11 @@ import com.drgnman.management_server_gradle.Entity.Topic;
 import com.drgnman.management_server_gradle.Repository.DataRepository;
 import com.drgnman.management_server_gradle.Repository.TopicRepository;
 import com.drgnman.management_server_gradle.common.CommonDBConnector;
+import com.drgnman.management_server_gradle.common.CommonSoxProcess;
 import com.drgnman.management_server_gradle.dto.DeviceDTO;
+import com.drgnman.management_server_gradle.dto.PublishDTO;
 import com.drgnman.management_server_gradle.dto.SearchDTO;
+import jp.ac.keio.sfc.ht.sox.soxlib.SoxConnection;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,6 +40,21 @@ public class SearchService {
     // CommonDBConnector commonDBConnector;
 
     final static ModelMapper modelMapper = new ModelMapper();
+
+    // region SOXにSubscribeを行う
+    public String publish (PublishDTO publishObj) {
+        try {
+            CommonSoxProcess commonSoxProcess = new CommonSoxProcess();
+            SoxConnection con = commonSoxProcess.CreateSoxConnection(publishObj.getSox_address(), publishObj.getSox_user(), publishObj.getSox_pass());
+            String publishConfirm = commonSoxProcess.Publish(con, publishObj);
+            return publishConfirm;
+        } catch (Exception e) {
+            // 検索がコケた場合にはとりあえず何か返しておく
+            System.out.println("Error: " + e);
+            return "failed";
+        }
+    }
+    // endregion
 
     // region SOXにSubscribeを行う
     public String search (SearchDTO searchObj) {
