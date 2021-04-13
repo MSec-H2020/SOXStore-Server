@@ -50,6 +50,13 @@ public class CommonSoxProcess {
         SoxDevice soxDevice = new SoxDevice(con, publishDto.getTheme());
         List<TransducerValue> valueList = new ArrayList<TransducerValue>();
 
+        TransducerValue userid = new TransducerValue();
+        userid.setId("UserID");
+        userid.setRawValue(publishDto.getUserid());
+        userid.setTypedValue(publishDto.getUserid());
+        userid.setCurrentTimestamp();
+        valueList.add(userid);
+
         TransducerValue username = new TransducerValue();
         username.setId("UserName");
         username.setRawValue(publishDto.getUsername());

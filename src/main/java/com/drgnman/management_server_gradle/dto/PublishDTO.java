@@ -10,7 +10,8 @@ public class PublishDTO implements Serializable {
     private String sox_user;            // SOX Username
     private String sox_pass;            // SOX Password
     private String theme;               // theme on SmileCityReport => (this means "device" on SOX)
-    private String username;            // post user
+    private String userid;            // post user id
+    private String username;            // post user name
     private String latitude;            //
     private String longitude;           //
     private String smiledegree;
@@ -61,6 +62,14 @@ public class PublishDTO implements Serializable {
         this.theme = theme;
     }
 
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -100,4 +109,5 @@ public class PublishDTO implements Serializable {
     public void setImagephoto(String imagephoto) {
         this.imagephoto = imagephoto;
     }
+
 }
