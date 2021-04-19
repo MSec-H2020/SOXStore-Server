@@ -52,44 +52,61 @@ public class CommonSoxProcess {
 
         TransducerValue userid = new TransducerValue();
         userid.setId("UserID");
-        userid.setRawValue(publishDto.getUserid());
-        userid.setTypedValue(publishDto.getUserid());
+        userid.setRawValue(publishDto.getUser_id());
+        userid.setTypedValue(publishDto.getUser_id());
+        // userid.setRawValue(publishDto.getUserid());
+        // userid.setTypedValue(publishDto.getUserid());
         userid.setCurrentTimestamp();
         valueList.add(userid);
 
-        TransducerValue username = new TransducerValue();
-        username.setId("UserName");
-        username.setRawValue(publishDto.getUsername());
-        username.setTypedValue(publishDto.getUsername());
-        username.setCurrentTimestamp();
-        valueList.add(username);
+        TransducerValue user_name = new TransducerValue();
+        user_name.setId("UserName");
+        user_name.setRawValue(publishDto.getUser_name());
+        user_name.setTypedValue(publishDto.getUser_name());
+        user_name.setCurrentTimestamp();
+        valueList.add(user_name);
+
+        TransducerValue public_key = new TransducerValue();
+        public_key.setId("UserName");
+        public_key.setRawValue(publishDto.getUser_name());
+        public_key.setTypedValue(publishDto.getUser_name());
+        public_key.setCurrentTimestamp();
+        valueList.add(public_key);
 
         TransducerValue latitude = new TransducerValue();
         latitude.setId("Latitude");
-        latitude.setRawValue(publishDto.getLatitude());
-        latitude.setTypedValue(publishDto.getLatitude());
+        latitude.setRawValue(publishDto.getLat());
+        latitude.setTypedValue(publishDto.getLat());
+        // latitude.setRawValue(publishDto.getLatitude());
+        // latitude.setTypedValue(publishDto.getLatitude());
         latitude.setCurrentTimestamp();
         valueList.add(latitude);
 
         TransducerValue longitude = new TransducerValue();
         longitude.setId("Longitude");
-        longitude.setRawValue(publishDto.getLongitude());
-        longitude.setTypedValue(publishDto.getLongitude());
+        longitude.setRawValue(publishDto.getLng());
+        longitude.setTypedValue(publishDto.getLng());
+        // longitude.setRawValue(publishDto.getLongitude());
+        // longitude.setTypedValue(publishDto.getLongitude());
         longitude.setCurrentTimestamp();
         valueList.add(longitude);
 
 
         TransducerValue smiledegree = new TransducerValue();
         smiledegree.setId("SmileDegree");
-        smiledegree.setRawValue(publishDto.getSmiledegree());
-        smiledegree.setTypedValue(publishDto.getSmiledegree());
+        smiledegree.setRawValue(publishDto.getSmiling_probability());
+        smiledegree.setTypedValue(publishDto.getSmiling_probability());
+        // smiledegree.setRawValue(publishDto.getSmiledegree());
+        // smiledegree.setTypedValue(publishDto.getSmiledegree());
         smiledegree.setCurrentTimestamp();
         valueList.add(smiledegree);
 
         TransducerValue imagephoto = new TransducerValue();
         imagephoto.setId("ImagePhoto");
-        imagephoto.setRawValue(publishDto.getImagephoto());
-        imagephoto.setTypedValue(publishDto.getImagephoto());
+        imagephoto.setRawValue(publishDto.getBack_photo());
+        imagephoto.setTypedValue(publishDto.getBack_photo());
+        // imagephoto.setRawValue(publishDto.getImagephoto());
+        // imagephoto.setTypedValue(publishDto.getImagephoto());
         imagephoto.setCurrentTimestamp();
         valueList.add(imagephoto);
 
