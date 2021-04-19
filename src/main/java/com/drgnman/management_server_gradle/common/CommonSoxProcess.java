@@ -67,7 +67,7 @@ public class CommonSoxProcess {
         valueList.add(user_name);
 
         TransducerValue public_key = new TransducerValue();
-        public_key.setId("UserName");
+        public_key.setId("PublicKey");
         public_key.setRawValue(publishDto.getUser_name());
         public_key.setTypedValue(publishDto.getUser_name());
         public_key.setCurrentTimestamp();
