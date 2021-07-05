@@ -7,8 +7,8 @@ public class SearchDTO {
     private String sox_address;         // SOX Address
     private String sox_user;            // SOX Username
     private String sox_pass;            // SOX Password
-
     private List<String> node_name;     // SOX node_name
+    private String keyword;             // keyword flag
 
     public String getSox_address() {
         return sox_address;
@@ -40,5 +40,13 @@ public class SearchDTO {
 
     public void setNode_name(List<String> node_name) {
         this.node_name = node_name;
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
     }
 }
