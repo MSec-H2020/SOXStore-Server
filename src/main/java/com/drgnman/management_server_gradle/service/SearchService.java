@@ -59,7 +59,7 @@ public class SearchService {
     // region SOXにSubscribeを行う
     public String search (SearchDTO searchObj) {
         try {
-            soxSyncService.soxSync(searchObj.getSox_address(), searchObj.getSox_user(), searchObj.getSox_pass(), searchObj.getNode_name());
+            soxSyncService.soxSync(searchObj.getSox_address(), searchObj.getSox_user(), searchObj.getSox_pass(), searchObj.getNode_name(), searchObj.getKeyword());
             return "success";
         } catch (Exception e) {
             // 検索がコケた場合にはとりあえず何か返しておく
@@ -72,7 +72,7 @@ public class SearchService {
     // region SOXにSubscribeを行う
     public List<String> getAllDevices (SearchDTO searchObj) {
         try {
-            List<String> nodeList = soxSyncService.soxGetDevices(searchObj.getSox_address(), searchObj.getSox_user(), searchObj.getSox_pass());
+            List<String> nodeList = soxSyncService.soxGetAllDevices(searchObj.getSox_address(), searchObj.getSox_user(), searchObj.getSox_pass());
             return nodeList;
         } catch (Exception e) {
             // 検索がコケた場合にはとりあえず何か返しておく
@@ -82,7 +82,7 @@ public class SearchService {
     }
     // endregion
 
-    // region SOXにSubscribeを行う
+    // region SOXからデバイスの詳細情報を取得する
     public List<DeviceDTO> getDeviceDetail (SearchDTO searchObj) {
         try {
             List<DeviceDTO> deviceList = soxSyncService.soxGetDeviceDetail(searchObj.getSox_address(), searchObj.getSox_user(), searchObj.getSox_pass(), searchObj.getNode_name());
@@ -120,7 +120,10 @@ public class SearchService {
             return null;
         }
     }
+
     // endregion
+
+    // region DB上に登録されているデバイスを全て取得する
     public List<String> getAllDevicesFromStoreDB () {
         List<Topic> topicList = topicRepository.findAll();
         List<String> resultList = new ArrayList<>();
@@ -129,4 +132,6 @@ public class SearchService {
         }
         return resultList;
     }
+    // endregion
+
 }
