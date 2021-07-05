@@ -46,6 +46,7 @@ public class CommonSoxProcess {
     }
     // endregion
 
+    // region Smile -> SOX用に追加したもの
     public String Publish(SoxConnection con, PublishDTO publishDto) throws Exception {
         SoxDevice soxDevice = new SoxDevice(con, publishDto.getTheme());
         List<TransducerValue> valueList = new ArrayList<TransducerValue>();
@@ -114,4 +115,5 @@ public class CommonSoxProcess {
 
         return "Publish to " + publishDto.getTheme() + " Complete";
     }
+    // endregion
 }
