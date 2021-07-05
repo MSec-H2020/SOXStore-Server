@@ -22,7 +22,7 @@ import java.util.Map;
 public class SearchController {
     @Autowired
     SearchService searchService;
-    // SOXから特定デバイスのsubscribeを開始してデータをStoreに保持する
+    // region SmileCityReport -> SOX用の実装
     @RequestMapping(value="/publish", method = RequestMethod.POST)
     @ResponseBody
     // region Searchメソッド
@@ -41,19 +41,28 @@ public class SearchController {
         // TOPIC DTOオブジェクトの生成
 
         // 戻り値格納用の変数
+        // soxへの接続情報とデバイス名を仮で直書き
+        publishObj.setSox_address("sox.jn.sfc.keio.ac.jp");
+        publishObj.setSox_user("SmileCityReportUser");
+        publishObj.setSox_pass("!msec2021");
+        publishObj.setTheme("SmileCityReportDevice1");
+        publishObj.setUser_name("keioUser1");
+        publishObj.setPublic_key("0x25a09c97819e842c72220520c58f46e01779f12a8d401f7d1fad7a165ba1f008");
         String result_msg = searchService.publish(publishObj);
 
         return result_msg;
     }
-
     // endregion
+    // endregion
+
     @RequestMapping("/search")
     @ResponseBody
     // region Searchメソッド
     public String search(
             @RequestParam(value = "server_address", defaultValue = "") String server_address,
-            @RequestParam(value = "sox_user", defaultValue = "") String sox_user,
-            @RequestParam(value = "sox_pass", defaultValue = "") String sox_pass,
+            @RequestParam(value = "sox_user", defaultValue = "")  String sox_user,
+            @RequestParam(value = "sox_pass", defaultValue = "")  String sox_pass,
+            @RequestParam(value = "keyword", defaultValue = "")   String keyword,
             @RequestParam(value = "node_name", defaultValue = "") List<String> node_name) throws JsonProcessingException {
             // @RequestParam(value = "db_address", defaultValue = "") String db_address,
             // @RequestParam(value = "db_user", defaultValue = "") String db_user,
@@ -66,6 +75,7 @@ public class SearchController {
         searchObj.setSox_user(sox_user);
         searchObj.setSox_pass(sox_pass);
         searchObj.setNode_name(node_name);
+        searchObj.setKeyword(keyword);
         String result_msg = searchService.search(searchObj);
 
         return result_msg;
