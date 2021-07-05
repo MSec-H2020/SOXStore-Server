@@ -68,5 +68,9 @@ public interface TopicRepository extends JpaRepository<Topic, Integer> {
             @Param("expect_time") int expect_time
     );
     // endregion
+
+    // 接続先のSOX情報を内部結合で持たせた検索クエリ
+    @Query(value = "SELECT * FROM TOPIC T INNER JOIN SOX_SERVER_INFO SSI ON T.SERVER_NAME = SSI.URL", nativeQuery = true)
+    List<Object> TopicSearchAndSoxInformation();
 }
 
