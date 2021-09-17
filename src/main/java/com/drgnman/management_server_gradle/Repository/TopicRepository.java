@@ -70,7 +70,7 @@ public interface TopicRepository extends JpaRepository<Topic, Integer> {
     // endregion
 
     // 接続先のSOX情報を内部結合で持たせた検索クエリ
-    @Query(value = "SELECT * FROM TOPIC T INNER JOIN SOX_SERVER_INFO SSI ON T.SERVER_NAME = SSI.URL", nativeQuery = true)
+    @Query(value = "SELECT * FROM topic T INNER JOIN sox_server_info SSI ON T.SERVER_NAME = SSI.URL ORDER BY T.SERVER_NAME", nativeQuery = true)
     List<Object> TopicSearchAndSoxInformation();
 }
 

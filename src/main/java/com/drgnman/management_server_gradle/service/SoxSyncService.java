@@ -51,7 +51,7 @@ public class SoxSyncService {
 
             SOX_SERVER_INFO soxServerInfo = new SOX_SERVER_INFO();
 
-            if (keyword.equals("yes")) {
+            if (keyword.equals("prefix")) {
                 List<String> allDeviceList = con.getAllSensorList();
                 List<String> tmpList = new ArrayList<String>(nodeList);
                 nodeList.clear();
@@ -78,6 +78,7 @@ public class SoxSyncService {
                 topicRepository.save(topic);
             }
 
+            // Thread.sleep(2000);
 
             // List<Topic> topicList = topicRepository.findAll();
             List<Object> serverList = topicRepository.TopicSearchAndSoxInformation();
@@ -87,9 +88,21 @@ public class SoxSyncService {
                 for (int i=0; i < length; i++){
                    list.add(Array.get(tp, i));
                 }
-                con = soxproc.CreateSoxConnection(list.get(4).toString(), list.get(5).toString(), list.get(6).toString());
+
+                // server_nameが初期値のまま，もしくは前のものと違った場合は格納し直してコネクションを再度作成(同じ場合は使い回す)
+                String server_name = url;
+                if (!server_name.equals(list.get(4).toString())) {
+                    System.out.println("unkooooo!");
+                    System.out.println("before: " + server_name);
+                    server_name = list.get(4).toString();
+                    System.out.println("changed: " + server_name);
+                    con = soxproc.CreateSoxConnection(server_name, list.get(5).toString(), list.get(6).toString());
+                }
+
                 // new CommonSoxSubscribe(con, topicRepository, dataRepository, tp.getTopic_id());
                 new CommonSoxSubscribe(con, topicRepository, dataRepository, list.get(0).toString());
+                // Thread.sleep(1000);
+                System.out.println(list.get(0).toString());
             }
         } catch (IOException ioException) {
             ioException.printStackTrace();

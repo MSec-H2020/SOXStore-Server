@@ -13,7 +13,11 @@ import jp.ac.keio.sfc.ht.sox.soxlib.event.SoxEventListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
+
+import java.util.Date;
 
 public class CommonSoxSubscribe implements SoxEventListener {
 
@@ -64,6 +68,12 @@ public class CommonSoxSubscribe implements SoxEventListener {
            data.setValue(value.getRawValue());
            // timestampの設定
            data.setPub_timestamp(value.getTimestamp());
+
+           DateFormat format = new SimpleDateFormat("mm:ss.SSS");
+           String now = format.format(new Date());
+           // Date now = new Date();
+           System.out.println(now);
+           data.setTimestamp(now);
 
            dataRepository.save(data);
 

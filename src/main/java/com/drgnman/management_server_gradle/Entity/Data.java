@@ -15,6 +15,8 @@ public class Data {
 
     private String value;              // データ本体
 
+    private String timestamp;
+
     public String getPub_timestamp() {
         return pub_timestamp;
     }
@@ -42,5 +44,13 @@ public class Data {
     }
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 }

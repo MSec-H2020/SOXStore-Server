@@ -1,5 +1,7 @@
 package com.drgnman.management_server_gradle.dto;
 
+import org.joda.time.DateTime;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -17,6 +19,7 @@ public class PublishDTO implements Serializable {
     private String smiling_probability;      // publisher smiling_probability
     private String lat;                      // publisher location(lat)
     private String lng;                      // publisher location(lng)
+    private String publish_timestamp;        // publish time stamp
     /// region old variable names
     // private String userid;                // post user id
     // private String latitude;              //
@@ -124,6 +127,14 @@ public class PublishDTO implements Serializable {
 
     public void setPublic_key(String public_key) {
         this.public_key = public_key;
+    }
+
+    public String getPublish_timestamp() {
+        return publish_timestamp;
+    }
+
+    public void setPublish_timestamp(String publish_timestamp) {
+        this.publish_timestamp = publish_timestamp;
     }
 
     /// region old variable names

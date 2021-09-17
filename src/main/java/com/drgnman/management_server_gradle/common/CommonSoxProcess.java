@@ -57,21 +57,21 @@ public class CommonSoxProcess {
         userid.setTypedValue(publishDto.getUser_id());
         // userid.setRawValue(publishDto.getUserid());
         // userid.setTypedValue(publishDto.getUserid());
-        userid.setCurrentTimestamp();
+        userid.setTimestamp(publishDto.getPublish_timestamp());
         valueList.add(userid);
 
         TransducerValue user_name = new TransducerValue();
         user_name.setId("UserName");
         user_name.setRawValue(publishDto.getUser_name());
         user_name.setTypedValue(publishDto.getUser_name());
-        user_name.setCurrentTimestamp();
+        user_name.setTimestamp(publishDto.getPublish_timestamp());
         valueList.add(user_name);
 
         TransducerValue public_key = new TransducerValue();
         public_key.setId("PublicKey");
         public_key.setRawValue(publishDto.getPublic_key());
         public_key.setTypedValue(publishDto.getPublic_key());
-        public_key.setCurrentTimestamp();
+        public_key.setTimestamp(publishDto.getPublish_timestamp());
         valueList.add(public_key);
 
         TransducerValue latitude = new TransducerValue();
@@ -80,7 +80,7 @@ public class CommonSoxProcess {
         latitude.setTypedValue(publishDto.getLat());
         // latitude.setRawValue(publishDto.getLatitude());
         // latitude.setTypedValue(publishDto.getLatitude());
-        latitude.setCurrentTimestamp();
+        latitude.setTimestamp(publishDto.getPublish_timestamp());
         valueList.add(latitude);
 
         TransducerValue longitude = new TransducerValue();
@@ -89,7 +89,7 @@ public class CommonSoxProcess {
         longitude.setTypedValue(publishDto.getLng());
         // longitude.setRawValue(publishDto.getLongitude());
         // longitude.setTypedValue(publishDto.getLongitude());
-        longitude.setCurrentTimestamp();
+        longitude.setTimestamp(publishDto.getPublish_timestamp());
         valueList.add(longitude);
 
 
@@ -99,7 +99,7 @@ public class CommonSoxProcess {
         smiledegree.setTypedValue(publishDto.getSmiling_probability());
         // smiledegree.setRawValue(publishDto.getSmiledegree());
         // smiledegree.setTypedValue(publishDto.getSmiledegree());
-        smiledegree.setCurrentTimestamp();
+        smiledegree.setTimestamp(publishDto.getPublish_timestamp());
         valueList.add(smiledegree);
 
         TransducerValue imagephoto = new TransducerValue();
@@ -108,7 +108,7 @@ public class CommonSoxProcess {
         imagephoto.setTypedValue(publishDto.getBack_photo());
         // imagephoto.setRawValue(publishDto.getImagephoto());
         // imagephoto.setTypedValue(publishDto.getImagephoto());
-        imagephoto.setCurrentTimestamp();
+        imagephoto.setTimestamp(publishDto.getPublish_timestamp());
         valueList.add(imagephoto);
 
         soxDevice.publishValues(valueList);

@@ -42,12 +42,13 @@ public class SearchController {
 
         // 戻り値格納用の変数
         // soxへの接続情報とデバイス名を仮で直書き
+        // PublishDTO publishObj = new PublishDTO();
         publishObj.setSox_address("sox.jn.sfc.keio.ac.jp");
         publishObj.setSox_user("SmileCityReportUser");
         publishObj.setSox_pass("!msec2021");
         publishObj.setTheme("SmileCityReportDevice1");
-        publishObj.setUser_name("keioUser1");
-        publishObj.setPublic_key("0x25a09c97819e842c72220520c58f46e01779f12a8d401f7d1fad7a165ba1f008");
+        // publishObj.setUser_name("keioUser1");
+        // publishObj.setPublic_key("0x25a09c97819e842c72220520c58f46e01779f12a8d401f7d1fad7a165ba1f008");
         String result_msg = searchService.publish(publishObj);
 
         return result_msg;
@@ -194,4 +195,5 @@ public class SearchController {
         return json;
     }
     // endregion
+
 }
