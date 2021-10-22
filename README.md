@@ -6,14 +6,18 @@
 
 ## Use file:
     sox-store-server-v.1.1.0.jar (update -> implemented new endpoint)
+    
     create_database.txt (update -> new table and modify Topic Table's column)
+    
     application.properties (not update, no change)
 
 
 ## Usage:
 ### Activation
    1. Please update or re-create Tables on "SOX_STORE" Schema. (Sorry, I forget table name regulation, maybe want you to use "lowercase".)
+
       If you success update the SOX_STORE schema, you can show a new table "server_info" and a new column "server_name" on "topic".
+     
    2. Please execute the command to activate the sox-store-server!
 
    Server Start Command:
@@ -38,9 +42,13 @@ Subscirbe Command:
 
 parameters:
     server_address -- This parameter orders the SOXFire address what you want to connect.
+    
     sox_user       -- This parameter orders the SOXFire username
+    
     sox_pass       -- This parameter orders the SOXFire password
+    
     keyword        -- This parameter orders the "prefix matching mode" (optional parameter) (keyword=prefix)
+    
     node_name      -- This parameter orders the node name what you want to get. This parameter can be ordered multiple. (ex. node_name=test_device1&node_name=test_device2 OK)
 
 This server registers the device once and continues to permanently store the published data from SOXFire in a DB until the server down.
@@ -49,8 +57,11 @@ This server registers the device once and continues to permanently store the pub
 Get list of all topic name:
 
 parameters:
+
     server_address -- This parameter orders the SOXFire address what you want to connect.
+    
     sox_user       -- This parameter orders the SOXFire username
+    
     sox_pass       -- This parameter orders the SOXFire password
   
     This command doesn't have "node_name" parameter because this command only uses to get names of all devices.
@@ -59,7 +70,11 @@ parameters:
 Get detail of node
 
 parameters:
+
     server_address -- This parameter orders the SOXFire address what you want to connect.
+    
     sox_user       -- This parameter orders the SOXFire username
+    
     sox_pass       -- This parameter orders the SOXFire password
+    
     node_name      -- This parameter orders the node name what you want to get. This parameter can be ordered multiple. (ex. node_name=test_device1&node_name=test_device2 OK)
