@@ -1,4 +1,21 @@
+# SOXStore-Server
 
+## Overview
+Currently, pub/sub-architecture is used to publish multiple users efficiently.
+In our research, we use the "SOXFire" platform based on the XMPP protocol. (https://github.com/MSec-H2020/Secure_SOXFire)  
+A SOXFire can immediately publish data to multiple subscribers, but this server cannot store the data on it.  
+Therefore, if the other applications want to use the previous data on the SOXFire, the developer has to implement the function to store data from SOXFire.  
+SOXStore-server can solve this problem.  This application uses to adapt the SOXFire.  
+This system has some functions, subscribing, storing, and searching, so a developer can easily manage data without implementing the complex function to connect SOXFire.
+
+## System Architecture
+The system architecture of SOXStore-server shows the following.
+This system performs as a web server.
+First, you confirm that you want to connect to the SOXFire, finally, you run this application on your machine.
+SOXStore-Server only uses the HTTP protocol to connect clients, so you can operate it easily.
+In addition, as shown in the figure, the system can connect to another platform/application.
+The details of commands show the following section.
+<img width="1097" alt="soxstoreserver" src="https://user-images.githubusercontent.com/13267712/140923418-4f1814df-da6b-451b-8431-9eb78df82af5.png">
 
 ## Environment:
     runtime: java 14
